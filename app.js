@@ -1,17 +1,18 @@
-const express = require("express")
-const connectDb = require('./config/db')
-const UserRouter = require('./routes/userRoute')
-const ProductRouter = require('./routes/ProductRoute')
+const express = require("express");
+const connectDb = require("./config/db");
+const UserRouter = require("./routes/userRoute");
+const ProductRouter = require("./routes/ProductRoute");
+const ReviewRoute = require("./routes/ReviewRoute");
 const app = express();
 
-connectDb()
+connectDb();
 app.use(express.json());
-app.use("/api/user", UserRouter );
-app.use("/api/product", ProductRouter );
+app.use("/api/user", UserRouter);
+app.use("/api/product", ProductRouter);
+app.use("/api/reviews", ReviewRoute);
 
 const port = 3000;
 
-
-app.listen(port,() =>{
-    console.log(`Server Running at http://localhost:${port}`)
-    })
+app.listen(port, () => {
+  console.log(`Server Running at http://localhost:${port}`);
+});

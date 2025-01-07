@@ -5,7 +5,7 @@ const productSchema = new mongoose.Schema(
     artist_id: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "User", // Reference to the User model
+      ref: "User",
     },
     title: {
       type: String,
@@ -26,7 +26,13 @@ const productSchema = new mongoose.Schema(
     },
     media_url: {
       type: String,
-      default: null, 
+      default: null,
+    },
+    stock_quantity: {
+      type: Number,
+      required: true,
+      default: 0,
+      min: [0, 'Stock quantity cannot be negative'],
     },
   },
   {
@@ -34,5 +40,5 @@ const productSchema = new mongoose.Schema(
   }
 );
 
-const Product = mongoose.model("Product", productSchema); // Corrected line
+const Product = mongoose.model("Product", productSchema); 
 module.exports = Product;
