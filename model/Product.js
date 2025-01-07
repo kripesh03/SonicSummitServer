@@ -5,7 +5,7 @@ const productSchema = new mongoose.Schema(
     artist_id: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "User", 
+      ref: "User", // Reference to the User model
     },
     title: {
       type: String,
@@ -34,7 +34,5 @@ const productSchema = new mongoose.Schema(
   }
 );
 
-const Product = mongoose.modelNames("Product", userSchema)
-
+const Product = mongoose.model("Product", productSchema); // Corrected line
 module.exports = Product;
-
