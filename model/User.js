@@ -2,11 +2,6 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    // user_id: {
-    //   type: Number,
-    //   required: true,
-    //   unique: true,
-    // },
     username: {
       type: String,
       required: true,
@@ -19,11 +14,6 @@ const userSchema = new mongoose.Schema(
       unique: true,
       maxlength: 100,
     },
-    // password: {
-    //   type: String,
-    //   required: true,
-    //   maxlength: 255,
-    // },
     role: {
       type: String,
       required: true,
@@ -40,9 +30,9 @@ const userSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
 );
-const User = mongoose.modelNames("Users", userSchema)
 
-module.exports = User;
+const User = mongoose.model("User", userSchema); // Ensure this line is correct
+module.exports = User; // Correctly exporting the model
