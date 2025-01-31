@@ -1,28 +1,28 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const { login, register } = require("../controller/AuthController");
-const { authenticateToken } = require("../security/Auth");
+const { login, register, uploadProfilePicture } = require("../controller/AuthController");
 
 // Multer storage configuration
 const storage = multer.diskStorage({
-  destination: function (req, res, cb) {
-    // Change this path to a directory where you want to store user profile pictures
+  destination: function (req, file, cb) {
     cb(null, "C:/Users/User/Desktop/SonicSummit_Server/images");
   },
   filename: function (req, file, cb) {
-    // Set the filename to original file name
-    cb(null, Date.now() + "-" + file.originalname); // Optional: adding timestamp to avoid name conflicts
+    cb(null, Date.now() + "-" + file.originalname);
   },
 });
 
-// Create Multer instance
+// Multer instance
 const upload = multer({ storage });
 
-// Register route with profile picture upload
-router.post("/register", upload.single("profile_picture"), register); // 'profile_picture' field is handled here
+// Register user with profile picture
+router.post("/register", upload.single("profilePicture"), register);
 
-// Login route
+// Login user
 router.post("/login", login);
+
+// Upload profile picture separately
+router.post("/uploadImage", upload.single("profilePicture"), uploadProfilePicture);
 
 module.exports = router;
