@@ -5,6 +5,7 @@ const ProductRouter = require("./routes/ProductRoute");
 const ReviewRoute = require("./routes/ReviewRoute");
 const CommunityPostRoute = require('./routes/CommunityPostRoute')
 const SearchProductRoute = require("./routes/SearchProductRoute");
+const AuthRouter = require("./routes/AuthRoute")
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use("/api/product", ProductRouter);
 app.use("/api/reviews", ReviewRoute);
 app.use("/api/communityposts", CommunityPostRoute);
 app.use("/api/search", SearchProductRoute); 
+app.use('/api/auth', AuthRouter);
 
 
 const port = 3000;

@@ -12,10 +12,6 @@ const userSchemaValidation = joi.object({
     "string.max": "Email cannot exceed 100 characters.",
     "any.required": "Email is required.",
   }),
-  role: joi.string().valid("artist", "admin", "costumer").required().messages({
-    "any.only": "Role must be one of 'artist', 'admin', or 'costumer'.",
-    "any.required": "Role is required.",
-  }),
   profile_picture: joi.string().uri().allow(null).max(255).messages({
     "string.uri": "Profile picture must be a valid URL.",
     "string.max": "Profile picture URL cannot exceed 255 characters.",
@@ -26,12 +22,11 @@ const userSchemaValidation = joi.object({
 });
 
 async function UserValidation(req, res, next) {
-  const { username, email, role, profile_picture, bio } = req.body;
+  const { username, email, profile_picture, bio } = req.body;
 
   const { error } = userSchemaValidation.validate({
     username,
     email,
-    role,
     profile_picture,
     bio,
   });

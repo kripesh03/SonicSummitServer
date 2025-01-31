@@ -14,11 +14,6 @@ const userSchema = new mongoose.Schema(
       unique: true,
       maxlength: 100,
     },
-    role: {
-      type: String,
-      required: true,
-      enum: ["artist", "admin", "costumer"],
-    },
     profile_picture: {
       type: String,
       default: null,
