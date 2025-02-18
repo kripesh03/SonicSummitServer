@@ -1,38 +1,40 @@
 const express = require("express");
-const {
-  save,
-  findAll,
-  findById,
-  updateById,
-  deleteById,
-} = require("../controller/ProductController");
+const { postAProduct, getAllProducts, getSingleProduct, updateProduct, deleteAProduct } = require("../controller/ProductController");
+const multer = require("multer");
+
 const router = express.Router();
 
-const multer = require("multer");
-const { authenticateToken } = require("../security/Auth");
+// Multer storage configuration
 const storage = multer.diskStorage({
-  destination: function (req, res, cb) {
-    cb(null, "C:/Users/User/Desktop/SonicSummit_Server/images");
+  destination: function (req, file, cb) {
+    cb(null, "C:/Users/User/Desktop/SonicSummit_Server/images"); // Change to your desired directory
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    cb(null, Date.now() + "-" + file.originalname);
   },
 });
+
 const upload = multer({ storage });
 
+// Create a product (with image & file upload)
+router.post("/create-product", upload.fields([
+  { name: "productImage", maxCount: 1 },
+  { name: "productFile", maxCount: 1 }
+]), postAProduct);
+
 // Get all products
-router.get("/", findAll);
+router.get("/", getAllProducts);
 
-// Create a new product
-router.post("/",authenticateToken, upload.single("file"), save);
+// Get a single product by ID
+router.get("/:id", getSingleProduct);
 
-// Get product by ID
-router.get("/:id",  findById);
+// Update a product by ID (with optional image & file upload)
+router.put("/edit/:id", upload.fields([
+  { name: "productImage", maxCount: 1 },
+  { name: "productFile", maxCount: 1 }
+]), updateProduct);
 
-// Update product by ID
-router.put("/:id",authenticateToken, upload.single("file"), updateById);
-
-// Delete product by ID
-router.delete("/:id",authenticateToken, deleteById);
+// Delete a product by ID
+router.delete("/:id", deleteAProduct);
 
 module.exports = router;

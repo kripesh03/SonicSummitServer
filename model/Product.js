@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema(
   {
-    artist_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "User",
-    },
     title: {
+      type: String,
+      required: true,
+      maxlength: 100,
+    },
+    artistName: {
       type: String,
       required: true,
       maxlength: 100,
@@ -16,7 +16,7 @@ const productSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    price: {
+    old_price: {
       type: mongoose.Types.Decimal128,
       required: true,
       validate: {
@@ -24,16 +24,37 @@ const productSchema = new mongoose.Schema(
         message: "Price must be a positive number.",
       },
     },
-    media_url: {
+
+    new_price: {
+      type: mongoose.Types.Decimal128,
+      required: true,
+      validate: {
+        validator: (value) => value >= 0,
+        message: "Price must be a positive number.",
+      },
+    },
+    productImage: {
       type: String,
       default: null,
     },
-    stock_quantity: {
-      type: Number,
-      required: true,
-      default: 0,
-      min: [0, 'Stock quantity cannot be negative'],
+    productFile: {
+      type: String,
+      default: null,
     },
+
+    trending: {
+      type: Boolean,
+      default: false,
+    },
+
+    category: {
+      type: String,
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    }
   },
   {
     timestamps: true, // Automatically creates `createdAt` and `updatedAt`
