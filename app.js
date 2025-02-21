@@ -7,6 +7,7 @@ const ReviewRoute = require("./routes/ReviewRoute");
 const CommunityPostRoute = require('./routes/CommunityPostRoute');
 const SearchProductRoute = require("./routes/SearchProductRoute");
 const AuthRouter = require("./routes/AuthRoute");
+const OrderRouter = require("./routes/OrderRoute");
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use(cors({
 app.use(express.json());
 
 // Define Routes
+app.use("/api/orders", OrderRouter);
 app.use("/api/user", UserRouter);
 app.use("/api/product", ProductRouter);
 app.use("/api/reviews", ReviewRoute);
