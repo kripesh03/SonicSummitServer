@@ -9,6 +9,7 @@ const SearchProductRoute = require("./routes/SearchProductRoute");
 const AuthRouter = require("./routes/AuthRoute");
 const OrderRouter = require("./routes/OrderRoute");
 const AdminRouter = require("./routes/AdminRoute");
+const AdminRoutes2 = require("./stats/adminStats");
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use("/api/communityposts", CommunityPostRoute);
 app.use("/api/search", SearchProductRoute);
 app.use("/api/auth", AuthRouter);
 app.use("/api/admin", AdminRouter);
+app.use("api/admin2", AdminRoutes2)
 
 // Set Server Port
 const port = 3000;
