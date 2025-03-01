@@ -27,6 +27,11 @@ app.use(cors({
 // Middleware to parse JSON requests
 app.use(express.json());
 
+const path = require("path");
+
+app.use("/images", express.static(path.join(__dirname, "images")));
+
+
 // Define Routes
 app.use("/api/orders", OrderRouter);
 app.use("/api/user", UserRouter);

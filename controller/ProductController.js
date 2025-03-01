@@ -5,7 +5,11 @@ const postAProduct = async (req, res) => {
   try {
     const { title, artistName, description, old_price, new_price, category, trending } = req.body;
 
-    const productImage = req.files["productImage"] ? req.files["productImage"][0].path : null;
+    const productImage = req.files["productImage"] 
+  ? `/images/${req.files["productImage"][0].filename}`
+  : null;
+
+
     const productFile = req.files["productFile"] ? req.files["productFile"][0].path : null;
 
     const newProduct = new Product({
@@ -62,8 +66,9 @@ const updateProduct = async (req, res) => {
     const updatedFields = { ...req.body };
 
     if (req.files["productImage"]) {
-      updatedFields.productImage = req.files["productImage"][0].path;
+      updatedFields.productImage = `/images/${req.files["productImage"][0].filename}`;
     }
+    
     if (req.files["productFile"]) {
       updatedFields.productFile = req.files["productFile"][0].path;
     }
