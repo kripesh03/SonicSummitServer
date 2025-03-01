@@ -3,9 +3,7 @@ const cors = require("cors"); // Import CORS middleware
 const connectDb = require("./config/db");
 const UserRouter = require("./routes/userRoute");
 const ProductRouter = require("./routes/ProductRoute");
-const ReviewRoute = require("./routes/ReviewRoute");
 const CommunityPostRoute = require('./routes/CommunityPostRoute');
-const SearchProductRoute = require("./routes/SearchProductRoute");
 const AuthRouter = require("./routes/AuthRoute");
 const OrderRouter = require("./routes/OrderRoute");
 const AdminRouter = require("./routes/AdminRoute");
@@ -36,9 +34,7 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/api/orders", OrderRouter);
 app.use("/api/user", UserRouter);
 app.use("/api/product", ProductRouter);
-app.use("/api/reviews", ReviewRoute);
 app.use("/api/communityposts", CommunityPostRoute);
-app.use("/api/search", SearchProductRoute);
 app.use("/api/auth", AuthRouter);
 app.use("/api/admin", AdminRouter);
 app.use("/api/admin2", AdminRoutes2)
