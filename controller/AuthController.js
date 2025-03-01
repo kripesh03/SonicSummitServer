@@ -77,34 +77,34 @@ const register = async (req, res) => {
 // ✅ Verify & Save User when clicking the email link
 // ✅ Verify & Save User when clicking the email link
 const verifyUser = async (req, res) => {
-    try {
-        const { token } = req.query;
+  try {
+      const { token } = req.query;
 
-        if (!token) {
-            return res.status(400).json({ message: "No token provided" });
-        }
+      if (!token) {
+          return res.status(400).json({ message: "No token provided" });
+      }
 
-        // Decode token
-        const decoded = jwt.verify(token, SECRET_KEY);
-        const { username, email, password, profilePicture, bio } = decoded;
+      // Decode token
+      const decoded = jwt.verify(token, SECRET_KEY);
+      const { username, email, password, profilePicture, bio } = decoded;
 
-        // Check if the user already exists in the database
-        const existingUser = await Credential.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: "User already verified or registered" });
-        }
+      // Check if the user already exists in the database
+      const existingUser = await Credential.findOne({ email });
+      if (existingUser) {
+          return res.status(400).json({ message: "User already verified or registered" });
+      }
 
-        // Hash password and save the user to the database
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new Credential({ username, email, password: hashedPassword, profilePicture, bio: bio || "" });
-        await newUser.save();
+      // Hash password and save the user to the database
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = new Credential({ username, email, password: hashedPassword, profilePicture, bio: bio || "" });
+      await newUser.save();
 
-        // Send success response instead of redirecting to another page
-        res.status(200).json({ message: "Registration successful! You are now verified." });
+      // ✅ Redirect user to React verification success page
+      res.redirect("http://localhost:5173/verify-success");
 
-    } catch (error) {
-        res.status(400).json({ message: "Verification failed", error: error.message });
-    }
+  } catch (error) {
+      res.status(400).json({ message: "Verification failed", error: error.message });
+  }
 };
 
 
