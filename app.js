@@ -41,7 +41,7 @@ app.use("/api/communityposts", CommunityPostRoute);
 app.use("/api/search", SearchProductRoute);
 app.use("/api/auth", AuthRouter);
 app.use("/api/admin", AdminRouter);
-app.use("api/admin2", AdminRoutes2)
+app.use("/api/admin2", AdminRoutes2)
 
 // Set Server Port
 const port = 3000;

@@ -2,6 +2,8 @@ const express = require("express");
 const { postAProduct, getAllProducts, getSingleProduct, updateProduct, deleteAProduct } = require("../controller/ProductController");
 const multer = require("multer");
 const verifyAdminToken = require("../middleware/verifyAdminToken");
+const ProductController = require('../controller/ProductController');
+
 
 const router = express.Router();
 
@@ -18,10 +20,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Create a product (with image & file upload)
-router.post("/create-product",verifyAdminToken, upload.fields([
-  { name: "productImage", maxCount: 1 },
-  { name: "productFile", maxCount: 1 }
-]), postAProduct);
+router.post('/create-product', ProductController.createProduct);
 
 // Get all products
 router.get("/", getAllProducts);
