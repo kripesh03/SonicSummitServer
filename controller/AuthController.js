@@ -129,7 +129,7 @@ const login = async (req, res) => {
       expiresIn: "2h",
     });
 
-    res.json({ message: "Login successful", token });
+    res.json({ message: "Login successful", token, userId: cred._id });
   } catch (error) {
     res.status(500).json({ message: "Error logging in", error: error.message });
   }
