@@ -1,45 +1,86 @@
 const Order = require("../model/Order");
 const Product = require("../model/Product");
+const Cart = require("../model/Cart");
 const nodemailer = require('nodemailer');
+const Credential = require("../model/Credentials");
+const mongoose = require('mongoose');
 
-// Create a new order and send product files via email
+// Create an Order
 const createAOrder = async (req, res) => {
   try {
-    const newOrder = new Order(req.body);
+    const { userId, name, email, phone } = req.body;
+
+    // Validate if the userId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid userId format" });
+    }
+
+    // Check if user exists (email is sufficient for user validation in this case)
+    const userExists = await Credential.findById(userId);
+    if (!userExists) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Ensure the name is provided in the request body
+    if (!name) {
+      return res.status(400).json({ message: "Name is required" });
+    }
+
+    // Check if user has a cart
+    const cart = await Cart.findOne({ userId }).populate('items.productId');
+    if (!cart || cart.items.length === 0) {
+      return res.status(400).json({ message: "Cart is empty" });
+    }
+
+    // Prepare the order data
+    const orderData = {
+      name,  // Use the name from the request body
+      email: userExists.email,
+      phone,
+      productIds: cart.items.map(item => item.productId),
+      totalPrice: cart.totalPrice
+    };
+
+    // Create a new order
+    const newOrder = new Order(orderData);
     const savedOrder = await newOrder.save();
 
-    const products = await Product.find({ '_id': { $in: savedOrder.productIds } });
+    // Prepare product files (if available)
+    const productFiles = cart.items
+      .map(item => item.productId.productFile)
+      .filter(file => file);
 
-    const productFiles = products.map(product => product.productFile).filter(file => file);
-
+    // Send confirmation email with attachments
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: 'pkripesh345@gmail.com',
-        pass: 'ccgh bzxq kytm tnxi'  
+        pass: 'ccgh bzxq kytm tnxi', // Please replace with your actual password or use environment variables
       },
-      secure: true, 
-      port: 465, 
+      secure: true,
+      port: 465,
       tls: {
-        rejectUnauthorized: false 
-      }
+        rejectUnauthorized: false,
+      },
     });
-    
-    
 
     const mailOptions = {
       from: 'pkripesh345@gmail.com',
-      to: savedOrder.email, // 
+      to: userExists.email,
       subject: 'Your Order Confirmation',
-      text: `Hello ${savedOrder.name},\n\nThank you for your order. Please find the product files attached.`,
+      text: `Hello ${name},\n\nThank you for your order. Please find the product files attached.`,
       attachments: productFiles.map(file => ({
-        filename: file.split('/').pop(), // 
-        path: file 
-      }))
+        filename: file.split('/').pop(),
+        path: file,
+      })),
     };
 
     await transporter.sendMail(mailOptions);
 
+    // Clear the cart after order creation
+    await Cart.findByIdAndDelete(cart._id);
+
+    // Send response with the created order
     res.status(200).json(savedOrder);
   } catch (error) {
     console.error("Error creating order", error);
@@ -47,35 +88,34 @@ const createAOrder = async (req, res) => {
   }
 };
 
-const getOrderByEmail = async (req, res) => {
+// Get all Orders
+const getAllOrders = async (req, res) => {
   try {
-    const { email } = req.params;
-    const orders = await Order.find({ email }).sort({ createdAt: -1 });
-    if (!orders.length) {
-      return res.status(404).json({ message: "Order not found" });
-    }
+    const orders = await Order.find().populate('productIds');
     res.status(200).json(orders);
   } catch (error) {
-    console.error("Error fetching orders", error);
-    res.status(500).json({ message: "Failed to fetch order" });
+    console.error("Error getting orders", error);
+    res.status(500).json({ message: "Failed to fetch orders" });
   }
 };
 
-const getAllOrders = async (req, res) => {
+// Get Orders by User Email
+const getOrderByEmail = async (req, res) => {
   try {
-    const orders = await Order.find(); 
-    if (!orders.length) {
-      return res.status(404).json({ message: 'No orders found' });
+    const { email } = req.params;
+    const orders = await Order.find({ email }).populate('productIds');
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "No orders found for this email" });
     }
     res.status(200).json(orders);
   } catch (error) {
-    console.error("Error fetching all orders", error);
-    res.status(500).json({ message: 'Error fetching all orders', error });
+    console.error("Error getting orders by email", error);
+    res.status(500).json({ message: "Failed to fetch orders by email" });
   }
 };
 
 module.exports = {
   createAOrder,
   getOrderByEmail,
-  getAllOrders
+  getAllOrders,
 };
