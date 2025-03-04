@@ -80,13 +80,17 @@ const createAOrder = async (req, res) => {
     // Clear the cart after order creation
     await Cart.findByIdAndDelete(cart._id);
 
-    // Send response with the created order
-    res.status(200).json(savedOrder);
+    // Send response with the created order and the userId
+    res.status(200).json({
+      order: savedOrder,
+      userId: userExists._id, // Include the userId in the response
+    });
   } catch (error) {
     console.error("Error creating order", error);
     res.status(500).json({ message: "Failed to create order" });
   }
 };
+
 
 // Get all Orders
 const getAllOrders = async (req, res) => {
@@ -100,22 +104,30 @@ const getAllOrders = async (req, res) => {
 };
 
 // Get Orders by User Email
-const getOrderByEmail = async (req, res) => {
+// Get Orders by User ID
+const getOrderByUserId = async (req, res) => {
   try {
-    const { email } = req.params;
-    const orders = await Order.find({ email }).populate('productIds');
+    const { userId } = req.params;
+    
+    // Validate if the userId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid userId format" });
+    }
+
+    const orders = await Order.find({ userId }).populate('productIds');
     if (!orders || orders.length === 0) {
-      return res.status(404).json({ message: "No orders found for this email" });
+      return res.status(404).json({ message: "No orders found for this userId" });
     }
     res.status(200).json(orders);
   } catch (error) {
-    console.error("Error getting orders by email", error);
-    res.status(500).json({ message: "Failed to fetch orders by email" });
+    console.error("Error getting orders by userId", error);
+    res.status(500).json({ message: "Failed to fetch orders by userId" });
   }
 };
 
+
 module.exports = {
   createAOrder,
-  getOrderByEmail,
+  getOrderByUserId,
   getAllOrders,
 };

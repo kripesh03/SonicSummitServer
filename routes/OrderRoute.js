@@ -1,5 +1,5 @@
 const express = require('express');
-const { createAOrder, getOrderByEmail, getAllOrders } = require('../controller/OrderController');
+const { createAOrder, getOrderByUserId, getAllOrders } = require('../controller/OrderController');
 
 const router =  express.Router();
 
@@ -7,7 +7,7 @@ const router =  express.Router();
 router.post("/", createAOrder);
 
 // get orders by user email 
-router.get("/email/:email", getOrderByEmail);
+router.get("/user/:userId", getOrderByUserId); // Updated this route
 
 router.get("/", getAllOrders); 
 
